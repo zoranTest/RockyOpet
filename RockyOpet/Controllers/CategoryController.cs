@@ -57,5 +57,49 @@ namespace RockyOpet.Controllers
         }
 
 
+
+        //GET - EDIT (da se otvori edit uopste)
+        public IActionResult Edit(int? id)
+        {
+            if (id == null || id == 0)  // ako nije stigao id
+            {
+                return NotFound();
+            }
+            var obj = _db.Category.Find(id);    // nadji u  bazi tog
+            if (obj == null)
+            {
+                return NotFound();
+            }
+
+            return View(obj);
+        }
+
+
+
+        //POST - EDIT  (da spasi izmjene ako je validno sve)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(Category obj)
+        {
+            if (ModelState.IsValid)
+            {
+                _db.Category.Update(obj);       // umjesto add ide update
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(obj);
+
+        }
+
+
+
+
+
+
+
+
+
+
+
     }
 }
