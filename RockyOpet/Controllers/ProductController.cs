@@ -49,7 +49,8 @@ namespace RockyOpet.Controllers
                 Value = i.Id.ToString()
             });
 
-            ViewBag.CategoryDropDown = CategoryDropDown;        // viewBagu dodijelimo ovo iznad za temporary data iz controllora u view
+            // ViewBag.CategoryDropDown = CategoryDropDown;        // viewBagu dodijelimo ovo iznad za temporary data iz controllora u view
+            ViewData["CategoryDropDown"] = CategoryDropDown;
 
             Product product = new Product();
 
