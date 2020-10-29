@@ -45,7 +45,8 @@
                         <label asp-for="Product.Description"></label>
                     </div>
                     <div class="col-8">
-                        <input asp-for="Product.Description" class="form-control" />
+                        @*<input asp-for="Product.Description" class="form-control" />*@
+                        <textarea asp-for="Product.Description" class="form-control summernote"></textarea>
                         <span asp-validation-for="Product.Description" class="text-danger"></span>
                     </div>
 
@@ -109,8 +110,24 @@
         <partial name="_ValidationScriptsPartial" />
     }
 
+     
 
     <script>
+
+
+
+        $(document).ready(function () {
+            $('.summernote').summernote({
+                height: 250
+            });
+        });
+
+
+
+
+
+
+
         function validateInput() {      /* upload box je id za image gore a validate input je klasa*/
             if (document.getElementById("uploadBox").value == "") {
                 Swal.fire(
