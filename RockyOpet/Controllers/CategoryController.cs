@@ -93,6 +93,38 @@ namespace RockyOpet.Controllers
 
 
 
+        //GET - DELETE
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            var obj = _db.Category.Find(id);
+            if (obj == null)
+            {
+                return NotFound();
+            }
+
+            return View(obj);
+        }
+
+        //POST - DELETE
+        [HttpPost]
+        [ValidateAntiForgeryToken]      // ispod pise DeletePost samo u view moramo delete kao naziv i to ce rijesiti error
+        public IActionResult DeletePost(int? id)    // samo nam id treba ne objekt komplet kao kod edita
+        {
+            var obj = _db.Category.Find(id);
+            if (obj == null)
+            {
+                return NotFound();
+            }
+            _db.Category.Remove(obj);       // remove 
+            _db.SaveChanges();
+            return RedirectToAction("Index");
+
+
+        }
 
 
 
