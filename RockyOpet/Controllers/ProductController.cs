@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using RockyOpet.Data;
 using RockyOpet.Models;
 using RockyOpet.Models.ViewModels;
@@ -19,10 +22,13 @@ namespace RockyOpet.Controllers
 
         private readonly ApplicationDbContext _db;
 
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ProductController(ApplicationDbContext dbb)
+
+        public ProductController(ApplicationDbContext dbb, IWebHostEnvironment webHostEnvironment)
         {
             _db = dbb;
+            _webHostEnvironment = webHostEnvironment;
         }
 
 
@@ -78,16 +84,73 @@ namespace RockyOpet.Controllers
         //POST FOR UPSERT
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Upsert(Category obj)
+        public IActionResult Upsert(ProductVM productVM)
         {
             if (ModelState.IsValid)
             {
-                _db.Category.Add(obj);
-                _db.SaveChanges();
+                var files = HttpContext.Request.Form.Files;     // prvo nam treba ta uploadana slika
+                string webRootPath = _webHostEnvironment.WebRootPath;   // treba nam path od wwwroot
+
+                if (productVM.Product.Id == 0)
+                {
+                    //Creating
+                    string upload = webRootPath + WC.ImagePath;     // wwwroot+\images\product
+                    string fileName = Guid.NewGuid().ToString();    // generisemo naziv fajla
+                    string extension = Path.GetExtension(files[0].FileName);    // jpg,png, tip slike
+
+                    using (var fileStream = new FileStream(Path.Combine(upload, fileName + extension), FileMode.Create))    // kreiraj novi fajl image i spasi gdje treba
+                    {
+                        files[0].CopyTo(fileStream);
+                    }
+
+                    productVM.Product.Image = fileName + extension; // ovde samo string pohranimo sa adresom i nazivom slike + ekstenzijom
+
+                    _db.Product.Add(productVM.Product); // dodaj u bazu
+                }
+                else
+                {
+                    //updating
+                    var objFromDb = _db.Product.AsNoTracking().FirstOrDefault(u => u.Id == productVM.Product.Id);       //!! asNoTracking jako bitno da baza povuce ali ne prati vise i da moze dalje ici using...
+
+                    if (files.Count > 0)
+                    {
+                        string upload = webRootPath + WC.ImagePath;
+                        string fileName = Guid.NewGuid().ToString();
+                        string extension = Path.GetExtension(files[0].FileName);
+
+                        var oldFile = Path.Combine(upload, objFromDb.Image);
+
+                        if (System.IO.File.Exists(oldFile))
+                        {
+                            System.IO.File.Delete(oldFile);
+                        }
+
+                        using (var fileStream = new FileStream(Path.Combine(upload, fileName + extension), FileMode.Create))
+                        {
+                            files[0].CopyTo(fileStream);
+                        }
+
+                        productVM.Product.Image = fileName + extension;
+                    }
+                    else
+                    {
+                        productVM.Product.Image = objFromDb.Image;
+                    }
+                    _db.Product.Update(productVM.Product);
+                }
+
+
+                _db.SaveChanges();      // spasi bazu
                 return RedirectToAction("Index");
             }
 
-            return View(obj);
+            productVM.CategorySelectList = _db.Category.Select(i => new SelectListItem
+            {
+                Text = i.Name,
+                Value = i.Id.ToString()
+            });
+
+            return View(productVM);
 
         }
 
