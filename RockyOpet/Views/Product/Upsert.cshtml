@@ -109,4 +109,21 @@
         <partial name="_ValidationScriptsPartial" />
     }
 
+
+    <script>
+        function validateInput() {      /* upload box je id za image gore a validate input je klasa*/
+            if (document.getElementById("uploadBox").value == "") {
+                Swal.fire(
+                    'Error!',
+                    'Please upload an Image!',
+                    'error'
+                )
+                return false;
+            }
+            return true;
+        }
+    </script>
+
+
+
 } 
