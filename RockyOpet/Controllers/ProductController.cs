@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using RockyOpet.Data;
 using RockyOpet.Models;
+using RockyOpet.Models.ViewModels;
 
 
 // kad god nesto saljemo iz Kontrolera moramo unutar viewa to da prihvatimo
@@ -42,30 +43,34 @@ namespace RockyOpet.Controllers
         // GET FOR UPSERT
         public IActionResult Upsert(int? id)     // ako je edit stice Id od producta   
         {
-                    // iz kategorije nam treba za drop down za text ime i value za id
-            IEnumerable<SelectListItem> CategoryDropDown = _db.Category.Select(i => new SelectListItem
-            {
-                Text = i.Name,
-                Value = i.Id.ToString()
-            });
+            // iz kategorije nam treba za drop down za text ime i value za id
+            //IEnumerable<SelectListItem> CategoryDropDown = _db.Category.Select(i => new SelectListItem
+            //{
+            //    Text = i.Name,
+            //    Value = i.Id.ToString()
+            //});
 
-            // ViewBag.CategoryDropDown = CategoryDropDown;        // viewBagu dodijelimo ovo iznad za temporary data iz controllora u view
-            ViewData["CategoryDropDown"] = CategoryDropDown;
+            //// ViewBag.CategoryDropDown = CategoryDropDown;        // viewBagu dodijelimo ovo iznad za temporary data iz controllora u view
+            //ViewData["CategoryDropDown"] = CategoryDropDown;
 
-            Product product = new Product();
+            //Product product = new Product();
+
+            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            ProductVM productVM = new ProductVM() { Product = new Product(), CategorySelectList = _db.Category.Select(i => new SelectListItem { Text=i.Name,Value=i.Id.ToString() }) };
+
 
             if (id == null)
             {//this is for create
-                return View(product);
+                return View(productVM);
             }
             else
             {
-                product = _db.Product.Find(id);     // nadji taj producta
-                if (product == null)
+                productVM.Product = _db.Product.Find(id);     // iz vm-a product
+                if (productVM.Product == null)
                 {
                     return NotFound();
                 }
-                return View(product);
+                return View(productVM);
             }
 
         }

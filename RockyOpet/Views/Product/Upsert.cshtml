@@ -1,4 +1,5 @@
-﻿@model RockyOpet.Models.Product
+﻿@*@model RockyOpet.Models.Product*@
+@model RockyOpet.Models.ViewModels.ProductVM
 
 @{
     var title = "Create Product";
@@ -7,10 +8,10 @@
 
 <form method="post" enctype="multipart/form-data">
     @* enctype je obavezan za slike! *@
-    @if (Model.Id != 0)
+    @if (Model.Product.Id != 0)
     {
         title = "Edit Product";
-        <input asp-for="Id" hidden /> @* id nam treba akko je edit*@
+        <input asp-for="Product.Id" hidden /> @* id nam treba akko je edit*@
     }
     <div class="border p-3">
 
@@ -21,31 +22,31 @@
             <div class="col-8">
                 <div class="form-group row">
                     <div class="col-4">
-                        <label asp-for="Name"></label>
+                        <label asp-for="Product.Name"></label>
                     </div>
                     <div class="col-8">
-                        <input asp-for="Name" class="form-control" />
-                        <span asp-validation-for="Name" class="text-danger"></span>
+                        <input asp-for="Product.Name" class="form-control" />
+                        <span asp-validation-for="Product.Name" class="text-danger"></span>
                     </div>
 
                 </div>
                 <div class="form-group row">
                     <div class="col-4">
-                        <label asp-for="Price"></label>
+                        <label asp-for="Product.Price"></label>
                     </div>
                     <div class="col-8">
-                        <input asp-for="Price" class="form-control" />
-                        <span asp-validation-for="Price" class="text-danger"></span>
+                        <input asp-for="Product.Price" class="form-control" />
+                        <span asp-validation-for="Product.Price" class="text-danger"></span>
                     </div>
 
                 </div>
                 <div class="form-group row">
                     <div class="col-4">
-                        <label asp-for="Description"></label>
+                        <label asp-for="Product.Description"></label>
                     </div>
                     <div class="col-8">
-                        <input asp-for="Description" class="form-control" />
-                        <span asp-validation-for="Description" class="text-danger"></span>
+                        <input asp-for="Product.Description" class="form-control" />
+                        <span asp-validation-for="Product.Description" class="text-danger"></span>
                     </div>
 
                 </div>
@@ -60,22 +61,23 @@
                 </div>
                 <div class="form-group row">
                     <div class="col-4">
-                        <label asp-for="CategoryId"></label>
+                        <label asp-for="Product.CategoryId"></label>
                     </div>
                     <div class="col-8">
                         @* lista svih itema treba nam samo ime za viewbag | view data samo da je tipa ienumerable *@
                         @*<select asp-for="CategoryId" asp-items="@ViewBag.CategoryDropDown" class="form-control">*@
-                        <select asp-for="CategoryId" asp-items="@ViewData["CategoryDropDown"] as IEnumerable<SelectListItem>" class="form-control">
+                        @*<select asp-for="Product.CategoryId" asp-items="@ViewData["CategoryDropDown"] as IEnumerable<SelectListItem>" class="form-control">*@
+                        <select asp-for="Product.CategoryId" asp-items="@Model.CategorySelectList" class="form-control">
                             <option disabled selected>--Select Category--</option>
                         </select>
-                        <span asp-validation-for="CategoryId" class="text-danger"></span>
+                        <span asp-validation-for="Product.CategoryId" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="form-group row">
                     <div class="col-8 offset-4 row">
 
                         <div class="col">
-                            @if (Model.Id != 0)
+                            @if (Model.Product.Id != 0)
                             {
                                 //update
                                 <input type="submit" class="btn btn-info w-100" value="Update" />
