@@ -34,9 +34,27 @@ namespace RockyOpet.Controllers
         }
 
 
+        // GET FOR CREATE
+        public IActionResult Create()        
+        {                  
+            return View();   
+        }
 
+        //POST FOR CREATE
+        [HttpPost]      // ovo je post action method od create.cshmtl viewa i forme
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(Category obj)   // da dodamo u bazu novu kategoriju 
+        {
+            if (ModelState.IsValid)
+            {
+                _db.Category.Add(obj);
+                _db.SaveChanges();
+                return RedirectToAction("Index");   // necemo view da vracamo nego redirect to action method a to je index iz ovog controllera
+            }
 
-
+            return View(obj);  // samo nazad na view da mozemo prikazati greske  a obj da ostanu podaci u inputimam
+            
+        }
 
 
     }

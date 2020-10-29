@@ -1,6 +1,6 @@
 ﻿
-@model IEnumerable<RockyOpet.Models.Category>      
- @* ovako prihvatimo kategorije koje je kontroler proslijedio*@
+@model IEnumerable<RockyOpet.Models.Category>
+@* ovako prihvatimo kategorije koje je kontroler proslijedio*@
 
 
 
@@ -9,8 +9,11 @@
         <div class="col-6">
             <h2 class="text-primary">Category List</h2>
         </div>
-        <div class="col-6">
-            Create New Category
+
+        <div class="col-6 text-right">
+            <a asp-controller="Category" asp-action="Create" class="btn btn-primary">
+                Create New Category
+            </a>
         </div>
     </div>
 
